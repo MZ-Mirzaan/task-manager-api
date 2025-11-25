@@ -1,42 +1,53 @@
-📘 Task Manager API – README
-📌 Overview
+# 🚀 Task Manager API
 
-The Task Manager API is a backend system built using Node.js, Express.js, and PostgreSQL, designed to manage authenticated users and their personal task lists.
-This project demonstrates core backend development concepts such as:
+A simple and secure **Task Manager REST API** built with **Node.js**, **Express.js**, and **PostgreSQL**.  
+The API allows users to register, log in, and manage their personal tasks with **JWT authentication**, **validation**, and **proper access control**.
 
-RESTful API design
+---
 
-JWT-based authentication
+## 📌 Features
 
-Database modeling & SQL queries
+### 🔐 Authentication
+- User registration  
+- Secure login  
+- Password hashing using **bcrypt**  
+- JWT-based authentication middleware  
 
-Error handling & validation
+### 📝 Task Management
+- Create tasks  
+- View all tasks (with pagination & filtering)  
+- View a single task  
+- Update tasks  
+- Delete tasks  
+- Users can access **only their own tasks**
 
-Unit testing with Jest
+### 🧪 Testing
+- 8 automated tests using **Jest + Supertest**  
+- DB cleanup before each test suite  
 
-API documentation via Postman
+### 📘 Documentation
+- Complete **Postman collection** included  
+- Automatic token saving script  
+- Environment variable support  
 
-This project was completed as an internship assessment task.
+---
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 
-Node.js
+- Node.js  
+- Express.js  
+- PostgreSQL (pg)  
+- bcryptjs  
+- JSON Web Tokens (JWT)  
+- Joi (validation)  
+- Jest & Supertest  
+- Postman
 
-Express.js
+---
 
-PostgreSQL (pg)
+## 📂 Project Structure
 
-JWT Authentication
-
-bcryptjs for password hashing
-
-Joi for validation
-
-Jest + Supertest for automated testing
-
-Postman for API documentation
-
-📂 Project Structure
+```
 task-manager-api/
 ├── src/
 │   ├── app.js
@@ -59,84 +70,48 @@ task-manager-api/
 ├── postman/
 │   └── TaskManagerAPI.postman_collection.json
 │
-├── .env
+├── .env (ignored)
 ├── package.json
-├── README.md
-└── LICENSE (optional)
+└── README.md
+```
 
-⚙️ Features
-🔐 Authentication
+---
 
-User registration
+## ⚙️ Setup Instructions
 
-Secure login
-
-Password encryption using bcrypt
-
-JWT-based session management
-
-Authorization middleware
-
-📝 Task Management
-
-Create tasks
-
-View all tasks (with pagination & filtering)
-
-View a single task
-
-Update tasks
-
-Delete tasks
-
-Each user can only access their own tasks
-
-🧪 Testing
-
-8 automated tests using Jest & Supertest
-
-Database reset before each test suite
-
-📘 Documentation
-
-Complete Postman collection included (/postman folder)
-
-Environment variables and automatic token saving
-
-🚀 Getting Started
-1️⃣ Clone the Repository
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/MZ-Mirzaan/task-manager-api.git
 cd task-manager-api
+```
 
-2️⃣ Install Dependencies
+### 2️⃣ Install Dependencies
+```bash
 npm install
+```
 
-3️⃣ Setup Environment Variables
+### 3️⃣ Environment Variables  
+Create a `.env` file in the project root:
 
-Create a .env file in the project root:
-
+```
 PORT=5000
 DATABASE_URL=postgres://postgres:yourpassword@localhost:5432/task_manager_api
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=1d
+```
 
+### 4️⃣ Database Setup
 
-Update username/password accordingly.
+In PostgreSQL shell:
 
-4️⃣ Create PostgreSQL Database
-
-In psql:
-
+```sql
 CREATE DATABASE task_manager_db;
-
-
-Connect to the database:
-
 \c task_manager_db
+```
 
+Create tables:
 
-Create required tables:
-
+```sql
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -154,86 +129,97 @@ CREATE TABLE tasks (
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
+```
 
-5️⃣ Start the Server
+### 5️⃣ Start the Server
+```bash
 npm run dev
+```
 
+---
 
-Server will run at:
+## 🧪 Running Tests
 
-http://localhost:5000
-
-🧪 Running Tests
+```bash
 npm test
+```
 
-
-Expected output:
-
+Expected:
+```
 PASS tests/auth.test.js
 PASS tests/tasks.test.js
 Test Suites: 2 passed
 Tests:       8 passed
+```
 
-📮 Postman Documentation
+---
 
-A full Postman collection is included:
+## 📮 API Documentation (Postman)
 
-/postman/TaskManagerAPI.postman_collection.json
+A full Postman collection is included here:
 
-Includes:
+```
+(https://documenter.getpostman.com/view/50332286/2sB3dHXtiC)
+```
 
-All endpoints
-
-Sample payloads
-
-Automatic token saving
-
-Environment variable support
-
-Detailed usage instructions
-
-Import the collection into Postman and set environment variables:
-
+### Environment Variables:
+```
 base_url = http://localhost:5000/api
 token = (auto-filled after login)
+```
 
-📑 API Endpoints Summary
-🔐 Auth
-Method	Endpoint	Description
-POST	/auth/register	Register new user
-POST	/auth/login	Login and receive JWT
-📝 Tasks (Requires: Authorization: Bearer <token>)
-Method	Endpoint	Description
-POST	/tasks	Create a task
-GET	/tasks?page=&limit=&status=	List tasks (with filters)
-GET	/tasks/:id	Get specific task
-PUT	/tasks/:id	Update task
-DELETE	/tasks/:id	Delete task
-🛡️ Error Handling
-
-This API includes a global error handler that returns consistent JSON:
-
-{
-  "message": "Error description"
+### Automatic token saving (Login → Post-response script):
+```js
+let data = pm.response.json();
+if (data.token) {
+    pm.environment.set("token", data.token);
 }
+```
 
+---
+
+## 🔗 API Endpoints Summary
+
+### 🔐 Auth
+| Method | Endpoint           | Description       |
+|--------|--------------------|-------------------|
+| POST   | `/auth/register`   | Register user     |
+| POST   | `/auth/login`      | Login, get token  |
+
+### 📝 Tasks (Protected)
+| Method | Endpoint               | Description          |
+|--------|-------------------------|----------------------|
+| POST   | `/tasks`                | Create task          |
+| GET    | `/tasks`                | List tasks           |
+| GET    | `/tasks/:id`            | Get task by ID       |
+| PUT    | `/tasks/:id`            | Update task          |
+| DELETE | `/tasks/:id`            | Delete task          |
+
+---
+
+## 🛡️ Error Handling
+
+The API returns consistent JSON errors:
+
+```json
+{
+  "message": "Error description here"
+}
+```
 
 Examples:
+- Missing token → `401 Unauthorized`
+- Invalid data → `400 Bad Request`
+- Resource not found → `404 Not Found`
 
-Missing token → 401 Unauthorized
+---
 
-Invalid token → 401 Unauthorized
+## 👨‍💻 Author
+**Mirzan Zuhair**  
 
-Missing fields → 400 Bad Request
-
-Not found → 404 Not Found
-
-🧑‍💻 Author
-
-Your Name
-Backend Developer Intern Applicant
 GitHub: https://github.com/MZ-Mirzaan
 
-📝 License
+---
 
-This project is open-source under the MIT License.
+## 📄 License
+This project is open-source under the **MIT License**.
