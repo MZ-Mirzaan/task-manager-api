@@ -159,7 +159,7 @@ Tests:       8 passed
 A full Postman collection is included here:
 
 ```
-/postman/TaskManagerAPI.postman_collection.json
+(https://documenter.getpostman.com/view/50332286/2sB3dHXtiC)
 ```
 
 ### Environment Variables:
