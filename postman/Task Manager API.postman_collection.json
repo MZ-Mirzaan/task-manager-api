@@ -1,0 +1,504 @@
+{
+	"info": {
+		"_postman_id": "834edfc8-75de-4ccc-819e-73a49bcc49f7",
+		"name": "Task Manager API",
+		"description": "StartFragment\n\n## 📌 Overview\n\nThe **Task Manager API** is a backend service built using **Node.js, Express, and PostgreSQL**, designed to manage user accounts and personal tasks.\n\nFeatures include:\n\n- User registration\n    \n- Login with JWT authentication\n    \n- Create, read, update, and delete tasks\n    \n- Pagination and filtering\n    \n- Input validation\n    \n- Secure access control (each user sees only their own tasks)\n    \n\n---\n\n## 🔧 Tech Stack\n\n- **Node.js**\n    \n- **Express.js**\n    \n- **PostgreSQL** (pg)\n    \n- **JWT Authentication**\n    \n- **bcryptjs** for password hashing\n    \n- **Joi** for validation\n    \n- **Jest & Supertest** for testing\n    \n\n# 🏁 Final Notes\n\n- This API follows REST standards.\n    \n- All business logic validated with Joi.\n    \n- Secure authentication with JWT.\n    \n- Error handling implemented at global level.\n    \n- Pagination included for scalability.  \n      \n    \n\nEndFragment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50332286",
+		"_collection_link": "https://flamingdarkhorse-8728705.postman.co/workspace/Night-Shade's-Workspace~e29b423e-94ee-413c-81fe-5f69b13b101f/collection/50332286-834edfc8-75de-4ccc-819e-73a49bcc49f7?action=share&source=collection_link&creator=50332286"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Request 1: Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"sampleuser@example.com\",\r\n  \"password\": \"password123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "> Registers a new user. Returns the ID and email of the created user  \nEmail must be unique.  \nPassword is securely hashed."
+					},
+					"response": []
+				},
+				{
+					"name": "Request 2: Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"\r",
+									"if (response.token) {\r",
+									"    pm.environment.set(\"token\", response.token);\r",
+									"} else {\r",
+									"    console.log(\"Token not found in response\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"sampleuser@example.com\",\r\n  \"password\": \"password123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in the user and returns a JWT token.\n\nThe token is automatically saved to the Postman environment"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Request 3: Create Task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": " Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"My Task\",\r\n  \"description\": \"Details\",\r\n  \"status\": \"pending\",\r\n  \"dueDate\": \"2025-02-01\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						},
+						"description": "Creates a new task belonging to the authenticated user"
+					},
+					"response": [
+						{
+							"name": "New Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": " Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"My Task\",\r\n  \"description\": \"Details\",\r\n  \"status\": \"pending\",\r\n  \"dueDate\": \"2025-02-01\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/tasks",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tasks"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "199"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"c7-clDBxjElOGDpTntRd6Iu0OwMSHc\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 25 Nov 2025 07:53:54 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 3,\n    \"user_id\": 5,\n    \"title\": \"My Task\",\n    \"description\": \"Details\",\n    \"status\": \"pending\",\n    \"due_date\": \"2025-01-31T18:30:00.000Z\",\n    \"created_at\": \"2025-11-25T07:53:54.443Z\",\n    \"updated_at\": \"2025-11-25T07:53:54.443Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Request 4: Get Tasks (with Pagination & Filtering)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": " Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks?page=1&limit=10&status=pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						},
+						"description": "Returns paginated tasks for the authenticated user. Supports filtering by status  \n`page` and `limit` control pagination\n\n`status` is optional:\n\n- `pending`\n    \n- `in_progress`\n    \n- `completed`"
+					},
+					"response": [
+						{
+							"name": "Request 4: Get Tasks (with Pagination & Filtering)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": " Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/tasks?page=1&limit=10&status=pending",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tasks"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "status",
+											"value": "pending"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "241"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"f1-tqyTm9S+HgDNFpInWcE5DL0t2k0\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 25 Nov 2025 07:54:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"page\": 1,\n    \"limit\": 10,\n    \"total\": 1,\n    \"tasks\": [\n        {\n            \"id\": 3,\n            \"user_id\": 5,\n            \"title\": \"My Task\",\n            \"description\": \"Details\",\n            \"status\": \"pending\",\n            \"due_date\": \"2025-01-31T18:30:00.000Z\",\n            \"created_at\": \"2025-11-25T07:53:54.443Z\",\n            \"updated_at\": \"2025-11-25T07:53:54.443Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Request 5: Get Single Task",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": " Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"3"
+							]
+						},
+						"description": "Returns a single task by ID.  \n  \nOnly accessible if the task belongs to the user"
+					},
+					"response": [
+						{
+							"name": "New Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": " Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/tasks/3",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tasks",
+										"3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "199"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"c7-clDBxjElOGDpTntRd6Iu0OwMSHc\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 25 Nov 2025 07:56:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 3,\n    \"user_id\": 5,\n    \"title\": \"My Task\",\n    \"description\": \"Details\",\n    \"status\": \"pending\",\n    \"due_date\": \"2025-01-31T18:30:00.000Z\",\n    \"created_at\": \"2025-11-25T07:53:54.443Z\",\n    \"updated_at\": \"2025-11-25T07:53:54.443Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Request 6: Update Task",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": " Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": \"completed\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/3\n",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"3\n"
+							]
+						},
+						"description": "Updates fields of an existing task"
+					},
+					"response": [
+						{
+							"name": "New Request",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": " Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"status\": \"completed\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/tasks/3\n",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tasks",
+										"3\n"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "201"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"c9-/uTYQ05MbP/DE4Dm7/4TOWxS0r8\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 25 Nov 2025 07:57:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 3,\n    \"user_id\": 5,\n    \"title\": \"My Task\",\n    \"description\": \"Details\",\n    \"status\": \"completed\",\n    \"due_date\": \"2025-01-31T18:30:00.000Z\",\n    \"created_at\": \"2025-11-25T07:53:54.443Z\",\n    \"updated_at\": \"2025-11-25T07:57:03.437Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Request 7: Delete Task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"description": "Deletes the task if it belongs to the authenticated user"
+					},
+					"response": []
+				}
+			],
+			"description": "> \n\n**All task endpoints require JWT authentication**  \n  \nInclude header:\n\n \n  \n\n``` json\nAuthorization: Bearer {{token}}\n\n ```"
+		}
+	]
+}
